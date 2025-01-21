@@ -1,97 +1,66 @@
-class Food:
-    def __init__(self, name, price, ingredients, cuisine):
-        self.name = name
-        self.price = price
-        self.ingredients = ingredients
-        self.cuisine = cuisine
-        self.rating = 0
-        self.total_ratings = 0
-        self.num_ratings = 0
+class Restaurant:
+    def __init__(self):
+        self.menu = {}
+        self.total_sales = 0 
 
-    def set_price(self, new_price):
-        self.price = new_price
+    def add_food(self, name, price):
+        self.menu[name] = price
+        print(f"Added {name} for {price} Hezar Toman")
 
-    def add_rating(self, new_rating):
-        self.total_ratings += new_rating
-        self.num_ratings += 1
-        self.rating = self.total_ratings / self.num_ratings
+    def show_menu(self):
+        for name, price in self.menu.items():
+            print(f"{name}: {price} Hezar Toman")
 
-class RestaurantStaff:
-    def __init__(self, name):
-        self.name = name
-        self.foods = []
+    def order_food(self, name):
+        if name in self.menu:
+            print(f"Ordered {name} for {self.menu[name]} Hezar Toman")
+            self.total_sales += self.menu[name]  
+        else:
+            print(f"Sorry, {name} is not available")
 
-    def define_food(self):
-        num_foods = int(input("How many foods do you want to define? "))
-        for _ in range(num_foods):
-            name = input("Enter food name: ")
-            price = float(input("Enter food price: "))
-            ingredients = input("Enter ingredients (comma-separated): ").split(",")
-            cuisine = input("Enter cuisine type (Iranian/Foreign): ")
-            food = Food(name, price, ingredients, cuisine)
-            self.foods.append(food)
-            print(f"Added {food.name} with price {food.price}, ingredients {food.ingredients}, and cuisine {food.cuisine}")
-        return self.foods
+    def show_total_sales(self):
+        print(f"Total sales: {self.total_sales} Hezar Toman") 
 
-    def update_food_price(self):
-        food_name = input("Enter food name to update: ")
-        new_price = float(input("Enter new price: "))
-        for food in self.foods:
-            if food.name == food_name:
-                food.set_price(new_price)
-                print(f"Updated price for {food.name} to {new_price}")
-                return
-        print("Food not found!")
 
-class Customer:
-    def __init__(self, name):
-        self.name = name
-        self.orders = []
-        self.cuisine_preference = ""
+def main():
+    restaurant = Restaurant()
+    password = "1743784554"  
 
-    def set_cuisine_preference(self):
-        self.cuisine_preference = input("Do you prefer Iranian or Foreign cuisine? ")
+    while True:
+        user_type = input("Are you a customer or staff? (Enter 'customer' or 'staff'): ").strip().lower()
+        
+        if user_type == "customer":
+            print("\nMenu:")
+            restaurant.show_menu()
+            food_item = input("Enter the food item you want to order: ").strip()
+            restaurant.order_food(food_item)
+            break
+        
+        elif user_type == "staff":
+            entered_password = input("Enter the staff password: ").strip()
+            if entered_password == password:
+                while True:
+                    action = input("Do you want to add a new food item or show the menu? (Enter 'add' or 'show'): ").strip().lower()
+                    if action == "add":
+                        food_name = input("Enter the name of the food: ").strip()
+                        food_price = float(input("Enter the price of the food: ").strip())
+                        restaurant.add_food(food_name, food_price)
+                    elif action == "show":
+                        print("\nMenu:")
+                        restaurant.show_menu()
+                    else:
+                        print("Invalid action. Please enter 'add' or 'show'.")
+                    
+                    another_action = input("Do you want to perform another action? (yes/no): ").strip().lower()
+                    if another_action != "yes":
+                        break
+            else:
+                print("Incorrect password. Access denied.")
+        else:
+            print("Invalid input. Please enter 'customer' or 'staff'.")
 
-    def order_food(self, staff):
-        food_name = input("Enter food name to order: ")
-        for food in staff.foods:
-            if food.name == food_name and food.cuisine == self.cuisine_preference:
-                print(f"{self.name} ordered {food.name}")
-                self.orders.append(food)
-                return
-        print("Food not found or doesn't match your cuisine preference!")
+    print("\nTotal Sales:")
+    restaurant.show_total_sales()
 
-    def rate_food(self):
-        food_name = input("Enter food name to rate: ")
-        rating = float(input("Enter your rating (1-5): "))
-        for food in self.orders:
-            if food.name == food_name:
-                food.add_rating(rating)
-                print(f"{self.name} rated {food.name} with a rating of {rating}")
-                print(f"New average rating: {food.rating}")
-                return
-        print("Food not found in your orders!")
-
-    def ask_for_invoice(self):
-        response = input(f"{self.name}, do you want an invoice for your order? (yes/no): ")
-        if response.lower() == 'yes':
-            print("Generating invoice...")
-            self.print_invoice()
-
-    def print_invoice(self):
-        print(f"Invoice for {self.name}:")
-        total_price = 0
-        for food in self.orders:
-            print(f"{food.name}: ${food.price}")
-            total_price += food.price
-        print(f"Total: ${total_price}")
-
-# Sample usage
-staff = RestaurantStaff("mehdi")
-staff.define_food()
-
-customer = Customer("reza")
-customer.set_cuisine_preference()
-customer.order_food(staff)
-customer.rate_food()
-customer.ask_for_invoice()
+if __name__ == "__main__":
+    main()
